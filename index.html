@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ice vs Fire Pong Game</title>
+    
+    <!-- CSS কোড এখানে যুক্ত করা হয়েছে -->
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: #0c0f12;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: 'Arial', sans-serif;
+            color: #ffffff;
+        }
+
+        .game-container {
+            text-align: center;
+        }
+
+        h1 {
+            margin-bottom: 15px;
+            font-size: 28px;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px rgba(0, 217, 255, 0.8), 0 0 10px rgba(255, 68, 0, 0.8);
+        }
+
+        canvas {
+            border: 3px solid #333;
+            box-shadow: 0 0 25px rgba(0, 217, 255, 0.3), 0 0 25px rgba(255, 68, 0, 0.3);
+            background: #000000;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="game-container">
+        <h1>ICE VS FIRE PONG</h1>
+        <canvas id="pongCanvas" width="800" height="500"></canvas>
+    </div>
+
+    <!-- জাভাস্ক্রিপ্ট ফাইলের লিংক -->
+    <script src="script.js"></script>
+
+</body>
+  </html>

@@ -27,17 +27,37 @@ class Particle {
 }
 function animate() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    if(Math.random() < 0.2) {
-        particles.push(new Particle(Math.random() * canvas.width/2, canvas.height, '#00d9ff', Math.random()*4 - 2, -Math.random()*4 - 1, Math.random()*5 + 2));
-        particles.push(new Particle(canvas.width/2 + Math.random() * canvas.width/2, canvas.height, '#ff4400', Math.random()*4 - 2, -Math.random()*4 - 1, Math.random()*5 + 2));
+
+    if(Math.random() < 0.3) {
+        // বাম দিকে পুরোটাই বরফের ইফেক্ট (x: 0 থেকে canvas.width / 2, y: 0 থেকে canvas.height)
+        particles.push(new Particle(
+            Math.random() * (canvas.width / 2), 
+            Math.random() * canvas.height, 
+            '#00d9ff', 
+            Math.random()*2 - 1, 
+            Math.random()*2 - 1, 
+            Math.random()*4 + 2
+        ));
+
+        // ডান দিকে পুরোটাই আগুনের ইফেক্ট (x: canvas.width / 2 থেকে canvas.width, y: 0 থেকে canvas.height)
+        particles.push(new Particle(
+            (canvas.width / 2) + Math.random() * (canvas.width / 2), 
+            Math.random() * canvas.height, 
+            '#ff4400', 
+            Math.random()*2 - 1, 
+            -Math.random()*3 - 1, 
+            Math.random()*4 + 2
+        ));
     }
+
     particles.forEach((particle, index) => {
         particle.update();
         particle.draw();
         if(particle.opacity <= 0) particles.splice(index, 1);
     });
+
     requestAnimationFrame(animate);
-}
+            }
 animate();
 
 // Paddle properties

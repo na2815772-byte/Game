@@ -1,5 +1,44 @@
-const canvas = document.getElementById("pongCanvas");
-const ctx = canvas.getContext("2d");
+const canvas = document.getElementById('pongCanvas');
+const ctx = canvas.getContext('2d');
+
+let particles = [];
+class Particle {
+    constructor(x, y, color, speedX, speedY, size) {
+        this.x = x;
+        this.y = y;
+        this.color = color;
+        this.speedX = speedX;
+        this.speedY = speedY;
+        this.size = size;
+        this.opacity = 1;
+    }
+    update() {
+        this.x += this.speedX;
+        this.y += this.speedY;
+        this.opacity -= 0.01;
+    }
+    draw() {
+        ctx.fillStyle = this.color;
+        ctx.globalAlpha = this.opacity;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fill();
+    }
+}
+function animate() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    if(Math.random() < 0.1) {
+        particles.push(new Particle(Math.random() * canvas.width/2, canvas.height, '#00d9ff', Math.random()*2 - 1, -Math.random()*2, Math.random()*3 + 1));
+        particles.push(new Particle(canvas.width - Math.random() * canvas.width/2, canvas.height, '#ff4400', Math.random()*2 - 1, -Math.random()*2, Math.random()*3 + 1));
+    }
+    particles.forEach((particle, index) => {
+        particle.update();
+        particle.draw();
+        if(particle.opacity <= 0) particles.splice(index, 1);
+    });
+    requestAnimationFrame(animate);
+}
+animate();
 
 // Paddle properties
 const paddleWidth = 12;

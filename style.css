@@ -32,13 +32,13 @@ h1 {
     text-shadow: 0 0 20px rgba(0, 217, 255, 0.5), 0 0 20px rgba(255, 68, 0, 0.5);
 }
 
-canvas {
+
+    canvas {
     border: 2px solid #1a222d;
-    background: #000000;
+    background: linear-gradient(90deg, #00d9ff 0%, #000000 50%, #ff4400 100%);
     border-radius: 12px;
-    /* Left Ice & Right Fire Glow Effects */
     box-shadow: 
         -15px 0 35px -5px rgba(0, 217, 255, 0.4), 
         15px 0 35px -5px rgba(255, 68, 0, 0.4),
         0 0 15px rgba(255, 255, 255, 0.1);
-      }
+    }

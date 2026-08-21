@@ -1,7 +1,5 @@
-import json
 import os
 import secrets
-
 from flask import (
     Flask,
     flash,
@@ -11,52 +9,36 @@ from flask import (
     session,
     url_for,
 )
+from pymongo import MongoClient
 
 app = Flask(__name__)
 
 # নিরাপদ random secret key
 app.secret_key = os.environ.get("SECRET_KEY") or secrets.token_hex(32)
 
-DATA_FILE = "users.json"
+# =========================
+# MONGO DB CONNECTION
+# =========================
+# আপনার MongoDB URI এখানে দিন অথবা Environment Variable এ 'MONGO_URI' সেট করুন
+MONGO_URI = os.environ.get("MONGO_URI") or "YOUR_MONGODB_CONNECTION_STRING_HERE"
+
+client = MongoClient(MONGO_URI)
+db = client["my_database"]       # ডেটাবেজের নাম
+users_collection = db["users"]   # কালেকশনের নাম
 
 
 # =========================
-# USER DATA FUNCTIONS
+# USER DATA FUNCTIONS (MONGODB)
 # =========================
 
-def load_users():
-    if not os.path.exists(DATA_FILE):
-        return {}
-
-    try:
-        with open(DATA_FILE, "r", encoding="utf-8") as file:
-            data = json.load(file)
-
-            if isinstance(data, dict):
-                return data
-
-            return {}
-
-    except (json.JSONDecodeError, OSError):
-        return {}
+def get_user_by_email(email):
+    """ইমেইল দিয়ে ইউজার ডিকশনারি খুঁজে আনে"""
+    return users_collection.find_one({"email": email})
 
 
-def save_users(users):
-    try:
-        temp_file = DATA_FILE + ".tmp"
-
-        with open(temp_file, "w", encoding="utf-8") as file:
-            json.dump(
-                users,
-                file,
-                indent=4,
-                ensure_ascii=False
-            )
-
-        os.replace(temp_file, DATA_FILE)
-
-    except OSError:
-        raise
+def create_user(user_data):
+    """নতুন ইউজার ডেটাবেজে সংরক্ষণ করে"""
+    users_collection.insert_one(user_data)
 
 
 # =========================
@@ -502,9 +484,7 @@ def home():
 
     email = session["user_email"]
 
-    users = load_users()
-
-    user_data = users.get(email)
+    user_data = get_user_by_email(email)
 
     if not user_data:
         session.pop("user_email", None)
@@ -532,106 +512,52 @@ def register():
 
     if request.method == "POST":
 
-        first_name = request.form.get(
-            "first_name",
-            ""
-        ).strip()
+        first_name = request.form.get("first_name", "").strip()
+        last_name = request.form.get("last_name", "").strip()
+        email = request.form.get("email", "").strip().lower()
+        phone = request.form.get("phone", "").strip()
+        password = request.form.get("password", "")
 
-        last_name = request.form.get(
-            "last_name",
-            ""
-        ).strip()
-
-        email = request.form.get(
-            "email",
-            ""
-        ).strip().lower()
-
-        phone = request.form.get(
-            "phone",
-            ""
-        ).strip()
-
-        password = request.form.get(
-            "password",
-            ""
-        )
-
-        # Basic validation
-
+        # Validation
         if not first_name:
-            flash(
-                "Please enter your first name.",
-                "error"
-            )
+            flash("Please enter your first name.", "error")
             return redirect(url_for("register"))
 
         if not last_name:
-            flash(
-                "Please enter your last name.",
-                "error"
-            )
+            flash("Please enter your last name.", "error")
             return redirect(url_for("register"))
 
         if not email:
-            flash(
-                "Please enter your email.",
-                "error"
-            )
+            flash("Please enter your email.", "error")
             return redirect(url_for("register"))
 
         if not phone:
-            flash(
-                "Please enter your phone number.",
-                "error"
-            )
+            flash("Please enter your phone number.", "error")
             return redirect(url_for("register"))
 
         if len(password) < 6:
-            flash(
-                "Password must be at least 6 characters.",
-                "error"
-            )
+            flash("Password must be at least 6 characters.", "error")
             return redirect(url_for("register"))
 
-        users = load_users()
+        # MongoDB-তে ইমেইল দিয়ে চেক করা
+        existing_user = get_user_by_email(email)
 
-        # Check existing email
+        if existing_user:
+            flash("This email is already registered!", "error")
+            return redirect(url_for("register"))
 
-        if email in users:
-
-            flash(
-                "This email is already registered!",
-                "error"
-            )
-
-            return redirect(
-                url_for("register")
-            )
-
-        # Create user (Plain Text Password)
-
-        users[email] = {
-
+        # MongoDB-তে নতুন ডক্যুমেন্ট ইনসার্ট করা
+        new_user = {
             "first_name": first_name,
-
             "last_name": last_name,
-
             "email": email,
-
             "phone": phone,
-
             "password": password
-
         }
 
-        save_users(users)
+        create_user(new_user)
 
-        flash(
-            "Registration successful! Please login.",
-            "success"
-        )
-
+        flash("Registration successful! Please login.", "success")
         return redirect(url_for("login"))
 
     return render_template_string(
@@ -649,39 +575,18 @@ def login():
 
     if request.method == "POST":
 
-        email = request.form.get(
-            "email",
-            ""
-        ).strip().lower()
+        email = request.form.get("email", "").strip().lower()
+        password = request.form.get("password", "")
 
-        password = request.form.get(
-            "password",
-            ""
-        )
+        user = get_user_by_email(email)
 
-        users = load_users()
-
-        user = users.get(email)
-
-        # Direct string comparison for password
         if user and user.get("password") == password:
-
             session.clear()
-
             session["user_email"] = email
+            return redirect(url_for("home"))
 
-            return redirect(
-                url_for("home")
-            )
-
-        flash(
-            "Invalid email or password!",
-            "error"
-        )
-
-        return redirect(
-            url_for("login")
-        )
+        flash("Invalid email or password!", "error")
+        return redirect(url_for("login"))
 
     return render_template_string(
         LOGIN_TEMPLATE,
@@ -697,15 +602,8 @@ def login():
 def logout():
 
     session.clear()
-
-    flash(
-        "You have been logged out.",
-        "success"
-    )
-
-    return redirect(
-        url_for("login")
-    )
+    flash("You have been logged out.", "success")
+    return redirect(url_for("login"))
 
 
 # =========================

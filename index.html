@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>Neon Racer 3D</title>
+<style>
+:root{--cyan:#20e7ff}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#06101e;color:#f4fbff;font-family:system-ui,Arial,sans-serif;touch-action:none}
+#game{position:fixed;inset:0;width:100%;height:100%;display:block}
+.screen{position:fixed;inset:0;z-index:5;display:none;align-items:center;justify-content:center;padding:14px;background:linear-gradient(135deg,#06101df0,#0a2038f0)}
+.screen.active{display:flex}
+.panel{width:min(620px,100%);max-height:94dvh;overflow:auto;padding:clamp(16px,4vw,28px);border:1px solid #28506b;border-radius:24px;background:linear-gradient(145deg,#122b42f7,#06111ff7);box-shadow:0 18px 65px #0009}
+.kicker{color:var(--cyan);font-size:11px;letter-spacing:2px;font-weight:800}
+h1{font-size:clamp(30px,7vw,52px);line-height:1.02;margin:10px 0;color:var(--cyan)}
+h2{margin:0 0 12px;font-size:24px}
+p{color:#c0d2e1;line-height:1.5}
+button,select{border:1px solid #315873;border-radius:12px;background:#18334c;color:#fff;padding:12px 14px;font-weight:750;font-size:14px}
+button{cursor:pointer;touch-action:manipulation}
+.primary{background:linear-gradient(120deg,#00dff3,#1683ff);color:#03131f;border:0}
+.gold{background:linear-gradient(120deg,#ffe36c,#ffad22);color:#2a1b00;border:0}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}.wide{grid-column:1/-1}
+.topHome{position:sticky;top:0;float:right;z-index:6;width:42px;height:42px;padding:0;border-radius:50%;font-size:20px;background:linear-gradient(120deg,#ffe36c,#ffad22);color:#2a1b00;border:0;box-shadow:0 3px 10px #0008}
+.stats{display:flex;gap:8px;margin:16px 0}
+.stat{flex:1;background:#061321;border:1px solid #21425b;border-radius:12px;padding:10px;min-width:0}
+.stat small{display:block;font-size:10px;color:#8ea9bd}.stat strong{font-size:20px}
+#hud{position:fixed;z-index:3;left:8px;right:8px;top:max(8px,env(safe-area-inset-top));display:none;justify-content:space-between;pointer-events:none}
+.col{display:flex;flex-direction:column;gap:6px;align-items:flex-start}.col.r{align-items:flex-end}
+.hb{padding:5px 11px;background:#222b30cc;border-left:3px solid #ffc23d;font-size:11px;font-weight:800;letter-spacing:.5px;color:#e9eef2}
+.hb b{color:#ffd34e;font-size:15px}
+.rb{pointer-events:auto;width:44px;height:44px;padding:0;border-radius:50%;background:#2b3338dd;border:2px solid #ffc23d;font-size:18px}
+#badge{position:fixed;z-index:3;top:max(8px,env(safe-area-inset-top));left:50%;transform:translateX(-50%);display:none;padding:7px 13px;border-radius:30px;background:#061321e8;border:1px solid #3a617b;font-weight:800;font-size:12px;white-space:nowrap}
+#controls{position:fixed;z-index:3;left:0;right:0;bottom:max(10px,env(safe-area-inset-bottom));display:none;justify-content:space-between;align-items:flex-end;padding:0 14px;pointer-events:none}
+.pad{display:flex;gap:12px;pointer-events:auto;align-items:flex-end}
+.ctrl{width:clamp(52px,10vw,66px);height:clamp(52px,10vw,66px);padding:0;font-size:26px;background:#2b3338dd;border:2px solid #ffc23d;color:#ffc23d;border-radius:50%;touch-action:none;user-select:none}
+.ctrl.on{filter:brightness(1.5);transform:scale(.94)}
+.pedal{padding:0;border:3px solid #2a1d06;border-radius:10px;background:repeating-linear-gradient(180deg,#f2b33a 0 7px,#5b3f0b 7px 10px);box-shadow:0 5px 0 #2a1d06,0 9px 14px #0008;touch-action:none;user-select:none;transition:transform .06s,box-shadow .06s}
+.pedal.brake{width:clamp(58px,11vw,78px);height:clamp(40px,8vw,56px)}
+.pedal.gas{width:clamp(44px,8vw,58px);height:clamp(80px,16vw,110px)}
+.pedal.on{transform:translateY(5px);box-shadow:0 0 0 #2a1d06;filter:brightness(1.3)}
+.pedal.brake.on{border-color:#ff5a4d}.pedal.gas.on{border-color:#27e07b}
+#speedo{position:fixed;z-index:3;left:50%;bottom:max(10px,env(safe-area-inset-bottom));transform:translateX(-50%);width:84px;height:84px;display:none;place-items:center;pointer-events:none}#speedo svg{position:absolute;inset:0;width:100%;height:100%}#speedo b{font-size:24px;position:relative;margin-top:-6px}#speedo small{position:absolute;bottom:16px;font-size:9px;color:#8ea9bd}
+#cars,#parts,#msList{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.car-card{position:relative;background:linear-gradient(160deg,#0e2438,#061321);border:1px solid #294d65;border-radius:16px;padding:11px;min-width:0}
+.car-card.r1{border-color:#4aa8ff;box-shadow:0 0 16px #2f8cff44}
+.car-card.r2{border-color:#ffc94a;box-shadow:0 0 20px #ffc94a55;background:linear-gradient(160deg,#2c2408,#061321)}
+.tag{position:absolute;z-index:2;top:8px;left:8px;font-size:9px;font-weight:900;letter-spacing:1px;padding:3px 7px;border-radius:8px;background:#4aa8ff;color:#021324}
+.r2 .tag{background:#ffc94a;color:#2a1b00}
+.car-art{height:92px;border-radius:12px;display:grid;place-items:center;background:radial-gradient(ellipse at 50% 100%,#3d7396,#0a1726 72%);overflow:hidden;margin-bottom:9px;border-bottom:2px solid #1d3a52}
+.car-art svg{width:95%;height:100%}
+.car-card h3{margin:5px 0;font-size:15px}.car-card p{margin:4px 0 6px;font-size:12px}.car-card button{width:100%;padding:10px 5px}
+.bar{height:5px;border-radius:3px;background:#102b40;margin:0 0 9px;overflow:hidden}.bar i{display:block;height:100%;background:linear-gradient(90deg,#00dff3,#ffd34e)}
+.sw{width:100%;height:38px;border-radius:10px;border:2px solid #fff4;margin-bottom:8px;display:grid;place-items:center;font-size:22px}
+.rq{display:inline-block;margin:2px 4px 4px 0;padding:2px 7px;border-radius:10px;background:#061321;border:1px solid #2c5570;font-size:12px;font-weight:700}
+.rq.ok{border-color:#27e07b;color:#b6ffd6}.rq.no{border-color:#ff5a4d;color:#ffb0a8}
+.row{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid #20394d}
+.row input[type=checkbox]{width:22px;height:22px;accent-color:#00ddeb}.row input[type=range]{width:45%;accent-color:#00ddeb}
+#rotateHint{display:none;position:fixed;z-index:8;inset:0;background:#06101f;align-items:center;justify-content:center;text-align:center;padding:28px}
+@media (orientation:portrait) and (max-width:900px){#rotateHint{display:flex}}
+@media (orientation:landscape){.panel{max-width:760px}.car-art{height:76px}}
+#tbar{position:fixed;z-index:3;left:50%;top:max(46px,calc(env(safe-area-inset-top) + 38px));transform:translateX(-50%);width:130px;height:8px;border-radius:4px;background:#061321cc;border:1px solid #3a617b;display:none;pointer-events:none}#tbar i{position:absolute;top:-3px;width:12px;height:12px;border-radius:50%;background:#20e7ff;left:50%;margin-left:-6px}
+#mission{position:fixed;z-index:3;left:50%;top:max(66px,calc(env(safe-area-inset-top) + 58px));transform:translateX(-50%);display:none;min-width:190px;padding:5px 14px 8px;border-radius:12px;background:#061321e8;border:1px solid #ffc23d;font-size:11px;font-weight:800;text-align:center;overflow:hidden;pointer-events:none}
+#mtxt{position:relative}#mbar{position:absolute;left:0;bottom:0;height:4px;width:0;background:linear-gradient(90deg,#00dff3,#ffd34e)}
+#lvlBanner{position:fixed;z-index:4;left:50%;top:36%;transform:translate(-50%,-50%);text-align:center;font-size:clamp(16px,3.2vw,24px);font-weight:900;line-height:1.6;padding:14px 26px;border-radius:18px;background:#061321ee;border:2px solid #ffd34e;color:#fff;opacity:0;pointer-events:none}
+#lvlBanner b{color:#ffd34e}
+#lvlBanner.show{animation:bn 4.2s forwards}
+@keyframes bn{0%{opacity:0;transform:translate(-50%,-50%) scale(.7)}10%{opacity:1;transform:translate(-50%,-50%) scale(1)}80%{opacity:1}100%{opacity:0}}
+.sup{width:48px;height:48px;font-size:19px;color:#fff;background:#7a1fd8dd;border-color:#ff5ad8}.sup.cd{filter:grayscale(.8);opacity:.75;color:#ddd}.sup.act{background:#ff3b30;box-shadow:0 0 18px #ff5ad8}
+#boost{position:fixed;inset:0;z-index:2;pointer-events:none;opacity:0;transition:opacity .25s;background:radial-gradient(ellipse at center,transparent 50%,#ff6a1a66 85%,#ffb03aaa 100%)}
+#toast{position:fixed;z-index:10;left:50%;bottom:90px;transform:translateX(-50%);background:#102b40;border:1px solid #4b819b;padding:10px 15px;border-radius:12px;display:none;text-align:center;max-width:90vw;font-size:13px}
+#skBtn{display:none;position:fixed;left:12px;top:50%;transform:translateY(-50%);z-index:4;font-size:20px;background:#ffc2dee;color:#2a1b00;border-color:#fff}
+#lootBar{position:fixed;z-index:3;left:50%;transform:translateX(-50%);top:max(136px,calc(env(safe-area-inset-top) + 128px));display:none;flex-wrap:wrap;justify-content:center;gap:5px;max-width:58vw;pointer-events:none}
+.lc{padding:3px 9px;border-radius:14px;background:#061321e8;border:1px solid #ffd34e;font-size:13px;font-weight:800;color:#fff}
+</style>
+</head>
+<body>
+<canvas id="game"></canvas>
+<div id="rotateHint"><div><div style="font-size:54px">📱 ↻</div><h2>ফোন আড়াআড়ি করুন</h2><p>গেমটি Landscape মোডে খেলুন।</p><button id="dismissRotate">ঠিক আছে</button></div></div>
+<div id="boost"></div>
+<div id="hud">
+  <div class="col">
+    <div class="hb">📍 DISTANCE <b id="dist">0.0</b> KM</div>
+    <button id="pause" class="rb">Ⅱ</button>
+    <button id="cam" class="rb">📷</button>
+  </div>
+  <div class="col r">
+    <div class="hb">LEVEL NO. <b id="level">1</b>/100</div>
+    <div class="hb">SCORE <b id="score">0</b></div>
+    <div class="hb">CAR HIT <b id="hits">0</b>/<span id="maxHits">3</span></div>
+    <div class="hb">💎 <b id="coinHud">0</b></div>
+  </div>
+</div>
+<div id="badge">🚦 <span id="sigT">GREEN</span> · <span id="spd">0</span>/<span id="lim">80</span> km/h</div>
+<div id="mission"><span id="mtxt"></span><i id="mbar"></i></div>
+<div id="lvlBanner"></div>
+<div id="lootBar"></div>
+<div id="controls">
+  <div class="pad">
+    <button class="ctrl" data-c="horn" style="font-size:22px">📯</button>
+    <button id="superBtn" class="ctrl sup" data-c="super" aria-label="Super speed">⚡</button>
+  </div>
+  <div class="pad">
+    <button class="pedal brake" data-c="brake" aria-label="Brake"></button>
+    <button class="pedal gas" data-c="gas" aria-label="Gas"></button>
+  </div>
+</div>
+<div id="speedo">
+  <svg viewBox="0 0 100 100">
+    <circle cx="50" cy="50" r="42" fill="#061321cc" stroke="#1d3a52" stroke-width="7"/>
+    <circle id="arc" cx="50" cy="50" r="42" fill="none" stroke="#20e7ff" stroke-width="7" stroke-dasharray="264" stroke-dashoffset="264" transform="rotate(-90 50 50)" stroke-linecap="round"/>
+  </svg>
+  <b id="big">0</b><small>km/h</small>
+</div>
+<div id="tbar"><i></i></div>
+<div id="toast"></div>
+<button id="skBtn" class="ctrl" aria-label="Skateboard">🛹</button>
+
+<section id="home" class="screen active">
+  <div class="panel">
+    <div class="kicker">MOBILE 3D DRIVING EXPERIENCE</div>
+    <h1>NEON RACER 3D</h1>
+    <p>হাইওয়েতে সুপারকার চালাo, ট্রাফিক আইন মানো, লাল সিগন্যালে থামো, গতিসীমা মেনে চলো। প্রতি লেভেলে স্কোর মিশন পূরণ করো, ডায়মন্ড ও পুরস্কার জমিয়ে নতুন গাড়ি (ট্রাক, মাইক্রো, মিসাইল কার...) ও নতুন রাস্তা কেনো। পুরস্কার দিয়ে রিপেয়ারিং গ্যারেজে গাড়ির বডি, চাকা, ফ্রেম, হেডলাইট সব আপগ্রেড করো।</p>
+    <div class="stats">
+      <div class="stat"><small>লেভেল</small><strong id="homeLvl">1</strong></div>
+      <div class="stat"><small>ডায়মন্ড</small><strong id="homeCoins">0</strong></div>
+      <div class="stat"><small>সেরা স্কোর</small><strong id="best">0</strong></div>
+      <div class="stat"><small>গাড়ি</small><strong id="homeCar">🏎️</strong></div>
+    </div>
+    <div class="grid2">
+      <button id="play" class="primary wide">▶ PLAY</button>
+      <button id="garageBtn">🏎 GARAGE</button>
+      <button id="settingsBtn">⚙ SETTINGS</button>
+      <button id="workBtn" class="gold wide">🔧 রিপেয়ারিং গ্যারেজ</button>
+      <button id="modBtn" class="gold wide">🎨 মডিফাই গ্যারেজ</button>
+    </div>
+    <p style="font-size:12px">ফোন ডানে-বামে কাত করে স্টিয়ার করো। গ্যাস প্যাডেল গতি বাড়ায়, ব্রেক প্যাডেল থামায়, 📯 হর্ন, 📷 ক্যামেরা বদল।</p>
+  </div>
+</section>
+
+<section id="garage" class="screen">
+  <div class="panel">
+    <button class="topHome" data-home aria-label="Home">⌂</button>
+    <h2>🏎 গ্যারেজ</h2>
+    <p>তোমার ডায়মন্ড: 💎 <b id="garageCoins">0</b></p>
+    <div id="invBox" style="font-size:13px;color:#c0d2e1;line-height:1.8;margin-bottom:8px"></div>
+    <div class="grid2">
+      <button id="tabCars" class="primary">🏎 গাড়ি</button>
+      <button id="tabRoads">🛣 রাস্তা</button>
+    </div>
+    <br><div id="cars"></div><br>
+    <button id="more" style="width:100%">⬇ আরও দেখুন</button>
+    <br><br><button id="garageWork" class="gold" style="width:100%">🔧 রিপেয়ারিং গ্যারেজ</button>
+    <br><br><button id="garageMod" class="gold" style="width:100%">🎨 মডিফাই গ্যারেজ</button>
+    <br><br><button data-home>⌂ HOME</button>
+  </div>
+</section>
+
+<section id="workshop" class="screen">
+  <div class="panel">
+    <button class="topHome" data-home aria-label="Home">⌂</button>
+    <h2>🔧 রিপেয়ারিং গ্যারেজ</h2>
+    <p style="margin:0 0 8px">পুরস্কার দিয়ে গাড়ি মডিফাই করো। আপগ্রেড শুধু বর্তমান গাড়িতে প্রযোজ্য।</p>
+    <div class="car-card" style="margin-bottom:12px"><div class="car-art" id="wsArt"></div><h3 id="wsName"></h3></div>
+    <div id="wsInv" style="font-size:13px;color:#c0d2e1;line-height:1.8;margin-bottom:10px"></div>
+    <div id="parts"></div>
+    <br><button id="wsToMod" class="gold" style="width:100%">🎨 মডিফাই গ্যারেজ</button>
+    <br><br><button data-home>⌂ HOME</button>
+  </div>
+</section>
+
+<section id="modshop" class="screen">
+  <div class="panel">
+    <button class="topHome" data-home aria-label="Home">⌂</button>
+    <h2>🎨 মডিফাই গ্যারেজ</h2>
+    <p style="margin:0 0 8px">খেলায় পাওয়া ২৩ ধরনের পুরস্কার দিয়ে কেনো। প্রতিটা জিনিস একটা নির্দিষ্ট পুরস্কার দিয়ে কেনা যায় — বডি, চাকা, কাচ, লাইট, কিট, হর্ন সব বদলাও।</p>
+    <div class="car-card" style="margin-bottom:12px"><div class="car-art" id="msArt"></div><h3 id="msName"></h3></div>
+    <div id="msBal" style="font-size:13px;color:#c0d2e1;line-height:1.8;margin-bottom:10px"></div>
+    <div class="grid2" id="msTabs" style="margin-bottom:12px"></div>
+    <div id="msList"></div>
+    <br><button id="msToWork" class="gold" style="width:100%">🔧 রিপেয়ারিং গ্যারেজ</button>
+    <br><br><button data-home>⌂ HOME</button>
+  </div>
+</section>
+
+<section id="settings" class="screen">
+  <div class="panel">
+    <h2>⚙ সেটিংস</h2>
+    <div class="row"><label for="music">🎵 ব্যাকগ্রাউন্ড মিউজিক</label><input id="music" type="checkbox" checked></div>
+    <div class="row"><label for="mvol">মিউজিক ভলিউম</label><input id="mvol" type="range" min="0" max="100" value="60"></div>
+    <div class="row"><label for="sound">🔊 সাউন্ড ইফেক্ট</label><input id="sound" type="checkbox" checked></div>
+    <div class="row"><label for="svol">ইফেক্ট ভলিউম</label><input id="svol" type="range" min="0" max="100" value="80"></div>
+    <div class="row"><label for="tilt">📱 ফোন কাত করে স্টিয়ারিং</label><input id="tilt" type="checkbox" checked></div>
+    <div class="row"><label for="inv">🔁 স্টিয়ারিং দিক উল্টো করো</label><input id="inv" type="checkbox"></div>
+    <div class="row"><label for="night">🌙 রাতের পরিবেশ</label><input id="night" type="checkbox"></div>
+    <div class="row"><label for="village">🌾 গ্রামীণ পরিবেশের রাস্তা (চালু/বন্ধ)</label><input id="village" type="checkbox"></div>
+    <div class="row"><label for="law">🚦 ট্রাফিক আইন (চালু/বন্ধ)</label><input id="law" type="checkbox" checked></div>
+    <div class="row"><label for="ppl">🚶 যাত্রী ওঠানামা (Passengers)</label><input id="ppl" type="checkbox" checked></div>
+    <div class="row"><label for="difficulty">🚗 ট্রাফিক কঠিনতা</label><select id="difficulty"><option value="easy">সহজ</option><option value="normal" selected>মাঝারি</option><option value="hard">কঠিন</option></select></div>
+    <br><button id="calibrate">ক্যালিব্রেট</button> <button data-home>⌂ HOME</button>
+  </div>
+</section>
+
+<section id="paused" class="screen">
+  <div class="panel">
+    <h2>GAME PAUSED</h2>
+    <div class="grid2">
+      <button id="resume" class="primary wide">▶ RESUME</button>
+      <button id="restart">↻ RESTART</button>
+      <button data-home>⌂ HOME</button>
+      <button id="pauseSettings" class="wide">⚙ SETTINGS</button>
+    </div>
+  </div>
+</section>
+
+<section id="over" class="screen">
+  <div class="panel">
+    <h1>GAME OVER</h1>
+    <p id="reason"></p>
+    <div class="stats">
+      <div class="stat">স্কোর<br><strong id="finalScore">0</strong></div>
+      <div class="stat">লেভেল<br><strong id="finalLevel">1</strong></div>
+    </div>
+    <div class="grid2">
+      <button id="retry" class="primary wide">↻ আবার খেলো</button>
+      <button data-home>⌂ HOME</button>
+      <button id="overGarage">🏎 GARAGE</button>
+      <button id="overWork" class="gold wide">🔧 রিপেয়ারিং গ্যারেজ</button>
+      <button id="overMod" class="gold wide">🎨 মডিফাই গ্যারেজ</button>
+    </div>
+  </div>
+</section>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="sprect.js"></script>
+</body>
+  </html>

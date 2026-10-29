@@ -4,12 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#050711">
-<title>Neon Racer 3D</title>
+<title>Neon Racer 3D - Ghost Kingdom</title>
 <style>
-/* ================= MAIN GAME CSS ================= */
-:root{--cyan:#20e7ff;--red:#ff3155;--gpanel:rgba(5,10,25,.88)}
+:root{--cyan:#20e7ff;--red:#ff3155;--panel:rgba(5,10,25,.88)}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#06101e;color:#f4fbff;font-family:system-ui,Arial,sans-serif;touch-action:none}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#03040b;color:#f4fbff;font-family:system-ui,Arial,sans-serif;touch-action:none}
 #game{position:fixed;inset:0;width:100%;height:100%;display:block}
 .screen{position:fixed;inset:0;z-index:5;display:none;align-items:center;justify-content:center;padding:14px;background:linear-gradient(135deg,#06101df0,#0a2038f0)}
 .screen.active{display:flex}
@@ -58,7 +57,7 @@ button{cursor:pointer;touch-action:manipulation}
 .rq.ok{border-color:#27e07b;color:#b6ffd6}.rq.no{border-color:#ff5a4d;color:#ffb0a8}
 .row{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid #20394d}
 .row input[type=checkbox]{width:22px;height:22px;accent-color:#00ddeb}.row input[type=range]{width:45%;accent-color:#00ddeb}
-#rotateHint{display:none;position:fixed;z-index:8;inset:0;background:#06101f;align-items:center;justify-content:center;text-align:center;padding:28px}
+#rotateHint{display:none;position:fixed;z-index:20;inset:0;background:#050711;align-items:center;justify-content:center;text-align:center;padding:28px}
 @media (orientation:portrait) and (max-width:900px){#rotateHint{display:flex}}
 @media (orientation:landscape){.panel{max-width:760px}.car-art{height:76px}}
 #tbar{position:fixed;z-index:3;left:50%;top:max(46px,calc(env(safe-area-inset-top) + 38px));transform:translateX(-50%);width:130px;height:8px;border-radius:4px;background:#061321cc;border:1px solid #3a617b;display:none;pointer-events:none}#tbar i{position:absolute;top:-3px;width:12px;height:12px;border-radius:50%;background:#20e7ff;left:50%;margin-left:-6px}
@@ -74,40 +73,6 @@ button{cursor:pointer;touch-action:manipulation}
 #skBtn{display:none;position:fixed;left:12px;top:50%;transform:translateY(-50%);z-index:4;font-size:20px;background:#ffc2dee;color:#2a1b00;border-color:#fff}
 #lootBar{position:fixed;z-index:3;left:50%;transform:translateX(-50%);top:max(136px,calc(env(safe-area-inset-top) + 128px));display:none;flex-wrap:wrap;justify-content:center;gap:5px;max-width:58vw;pointer-events:none}
 .lc{padding:3px 9px;border-radius:14px;background:#061321e8;border:1px solid #ffd34e;font-size:13px;font-weight:800;color:#fff}
-
-/* ================= GHOST KINGDOM CSS (সব #ghostKingdom এর ভেতরে, যাতে মেইন গেমের সাথে না মেশে) ================= */
-#ghostKingdom{position:fixed;inset:0;z-index:20;background:#03040b;color:white;font-family:Arial,sans-serif;touch-action:none}
-#ghostKingdom canvas{display:block;width:100%;height:100%}
-#gGame{position:fixed;inset:0}
-#ghostKingdom #hud{position:absolute;inset:0;left:0;right:0;top:0;display:block;pointer-events:none}
-#ghostKingdom .top{display:flex;justify-content:space-between;align-items:flex-start;padding:12px;gap:8px}
-#ghostKingdom .gpanel{background:var(--gpanel);border:1px solid #20e7ff55;border-radius:12px;padding:9px 12px;box-shadow:0 0 12px #00d9ff12}
-#ghostKingdom .gstat{font-size:12px;color:#b9d7e8;margin:3px 0}
-#ghostKingdom .gstat b{color:#fff;font-size:15px}
-#levelText{color:var(--cyan);font-weight:bold}
-#warning{position:absolute;top:24%;width:100%;text-align:center;color:#ff3155;font-weight:bold;font-size:clamp(17px,4vw,25px);text-shadow:0 0 15px red;display:none}
-#message{position:absolute;top:37%;width:100%;text-align:center;font-size:20px;font-weight:bold;color:white;text-shadow:0 0 12px cyan}
-#ghostKingdom .bottom{position:absolute;bottom:max(15px,env(safe-area-inset-bottom));left:0;right:0;display:flex;justify-content:space-between;align-items:end;padding:12px;gap:10px}
-#ghostKingdom .controls{display:flex;flex-wrap:wrap;gap:8px;max-width:65%}
-#ghostKingdom .btn{pointer-events:auto;min-width:55px;min-height:51px;border:1px solid #20e7ff99;background:rgba(3,10,25,.84);color:white;border-radius:14px;font-size:12px;font-weight:bold;padding:10px;box-shadow:0 0 12px #20e7ff20;touch-action:none}
-#ghostKingdom .btn:active,#ghostKingdom .btn.active{background:#087f9b;transform:scale(.96)}
-#ghostKingdom .btn.red{border-color:#ff3155}
-#ghostKingdom .speed{font-size:24px;font-weight:bold;text-align:center}
-#ghostKingdom .small{font-size:10px;color:#9bc1d2}
-#overlay{pointer-events:auto;position:fixed;inset:0;display:flex;justify-content:center;align-items:center;padding:18px;background:rgba(1,2,9,.92);z-index:10}
-#ghostKingdom .card{width:min(430px,100%);max-height:96dvh;overflow:auto;padding:22px;border:1px solid #20e7ff77;background:linear-gradient(150deg,#101b32,#03050d);border-radius:20px;text-align:center;box-shadow:0 0 40px #00d9ff16}
-#ghostKingdom .card h1{color:var(--cyan);font-size:26px}
-#ghostKingdom .card p{font-size:13px;color:#b7c8d9;line-height:1.6}
-#ghostKingdom .card button{width:100%;margin-top:9px;padding:14px;border-radius:11px;background:#00b9d5;color:#001019;border:0;font-weight:bold;font-size:15px}
-#ghostKingdom .card button.secondary{color:white;background:#182238;border:1px solid #3b526d}
-#ghostKingdom .setting{display:flex;justify-content:space-between;align-items:center;gap:8px;margin:12px 0;color:#dcefff;font-size:14px}
-#ghostKingdom .setting input{width:21px;height:21px}
-#permissionHint{font-size:11px;color:#8ca9bd}
-#pauseBtn{min-width:45px}
-#chapterInfo{font-size:10px;color:#a2d8e7}
-.hidden{display:none!important}
-#gRotateHint{display:none;position:fixed;z-index:30;inset:0;background:#050711;text-align:center;padding:25vh 20px;font-size:22px;font-weight:bold}
-@media (orientation:portrait){#ghostKingdom:not(.hidden) #gRotateHint{display:block}}
 </style>
 </head>
 <body>
@@ -154,9 +119,9 @@ button{cursor:pointer;touch-action:manipulation}
 
 <section id="home" class="screen active">
   <div class="panel">
-    <div class="kicker">MOBILE 3D DRIVING EXPERIENCE</div>
+    <div class="kicker">MOBILE 3D DRIVING EXPERIENCE - GHOST KINGDOM</div>
     <h1>NEON RACER 3D</h1>
-    <p>হাইওয়েতে সুপারকার চালাo, ট্রাফিক আইন মানো, লাল সিগন্যালে থামো, গতিসীমা মেনে চলো। প্রতি লেভেলে স্কোর মিশন পূরণ করো, ডায়মন্ড ও পুরস্কার জমিয়ে নতুন গাড়ি (ট্রাক, মাইক্রো, মিসাইল কার...) ও নতুন রাস্তা কেনো। পুরস্কার দিয়ে রিপেয়ারিং গ্যারেজে গাড়ির বডি, চাকা, ফ্রেম, হেডলাইট সব আপগ্রেড করো।</p>
+    <p>হাইওয়েতে সুপারকার চালাও, ট্রাফিক আইন মানো, লাল সিগন্যালে থামো, গতিসীমা মেনে চলো। প্রতি লেভেলে স্কোর মিশন পূরণ করো, ডায়মন্ড ও পুরস্কার জমিয়ে নতুন গাড়ি (ট্রাক, মাইক্রো, মিসাইল কার...) ও নতুন রাস্তা কেনো। পুরস্কার দিয়ে রিপেয়ারিং গ্যারেজে গাড়ির বডি, চাকা, ফ্রেম, হেডলাইট সব আপগ্রেড করো।</p>
     <div class="stats">
       <div class="stat"><small>লেভেল</small><strong id="homeLvl">1</strong></div>
       <div class="stat"><small>ডায়মন্ড</small><strong id="homeCoins">0</strong></div>
@@ -232,7 +197,7 @@ button{cursor:pointer;touch-action:manipulation}
     <div class="row"><label for="village">🌾 গ্রামীণ পরিবেশের রাস্তা (চালু/বন্ধ)</label><input id="village" type="checkbox"></div>
     <div class="row"><label for="law">🚦 ট্রাফিক আইন (চালু/বন্ধ)</label><input id="law" type="checkbox" checked></div>
     <div class="row"><label for="ppl">🚶 যাত্রী ওঠানামা (Passengers)</label><input id="ppl" type="checkbox" checked></div>
-    <div class="row"><label for="ghostToggle">👻 Ghost Kingdom (ভূতের রাজ্য)</label><input id="ghostToggle" type="checkbox"></div>
+    <div class="row"><label for="ghostToggle">👻 Ghost Kingdom (ভূতের রাজ্য)</label><input id="ghostToggle" type="checkbox" checked></div>
     <div class="row"><label for="difficulty">🚗 ট্রাফিক কঠিনতা</label><select id="difficulty"><option value="easy">সহজ</option><option value="normal" selected>মাঝারি</option><option value="hard">কঠিন</option></select></div>
     <br><button id="calibrate">ক্যালিব্রেট</button> <button data-home>⌂ HOME</button>
   </div>
@@ -268,131 +233,7 @@ button{cursor:pointer;touch-action:manipulation}
   </div>
 </section>
 
-<!-- ================= GHOST KINGDOM (দ্বিতীয় index.html এর পুরো কনটেন্ট) ================= -->
-<div id="ghostKingdom" class="hidden">
-  <div id="gGame"></div>
-  <div id="gRotateHint">📱<br><br>ফোন আড়াআড়ি করুন<br>
-  <small>Landscape মোডে খেলুন</small></div>
-
-  <div id="hud">
-    <div class="top">
-      <div class="gpanel">
-        <div class="gstat">DISTANCE <b id="distance">0.0</b> KM</div>
-        <div class="gstat">LEVEL <b id="levelText">1/50</b></div>
-        <div class="gstat" id="chapterInfo">CHAPTER 1</div>
-        <div class="gstat">SCORE <b id="gScore">0</b></div>
-        <div class="gstat">CAR HIT <b id="gHits">0</b>/3</div>
-      </div>
-      <div class="gpanel">
-        <div class="gstat">💎 COINS <b id="coins">0</b></div>
-        <div class="gstat">🚦 <b id="mode">NORMAL</b></div>
-        <div class="gstat">GHOSTS <b id="ghostCount">0</b>/3</div>
-        <button class="btn" id="pauseBtn">Ⅱ PAUSE</button>
-      </div>
-    </div>
-
-    <div id="warning">👻 THEY ARE COMING</div>
-    <div id="message"></div>
-
-    <div class="bottom">
-      <div>
-        <div class="controls">
-          <button class="btn" id="boostBtn">⚡ BOOST</button>
-          <button class="btn" id="brakeBtn">BRAKE</button>
-          <button class="btn" id="jumpBtn">⬆ JUMP</button>
-          <button class="btn" id="reverseBtn">↶ REVERSE</button>
-          <button class="btn" id="lightBtn">🔦 LIGHT ON</button>
-        </div>
-        <div class="small" style="margin-top:6px">
-          Tilt your phone to steer
-        </div>
-      </div>
-      <div class="gpanel">
-        <div class="speed"><span id="speed">0</span></div>
-        <div class="small">KM/H</div>
-      </div>
-    </div>
-  </div>
-
-  <div id="overlay">
-    <div class="card" id="menuCard">
-      <h1>👻 NEON RACER 3D</h1>
-      <p>GHOST KINGDOM</p>
-      <p>Survive the road. Escape the ghosts.</p>
-
-      <div class="setting">
-        <label for="ghostToggleMenu">Ghost Kingdom</label>
-        <input type="checkbox" id="ghostToggleMenu" checked>
-      </div>
-      <div class="setting">
-        <label for="soundToggle">Sound Effects</label>
-        <input type="checkbox" id="soundToggle" checked>
-      </div>
-      <div class="setting">
-        <label for="levelSelect">Challenge</label>
-        <select id="levelSelect" style="padding:8px;border-radius:8px">
-        </select>
-      </div>
-      <p id="permissionHint">
-        Tilt control may require motion permission.
-      </p>
-      <button id="startBtn">START GAME</button>
-      <button class="secondary" id="motionBtn">ENABLE TILT CONTROL</button>
-      <button class="secondary" id="resetBtn">RESET GAME PROGRESS</button>
-      <button class="secondary" id="gkHome">⌂ HOME (মেইন গেম)</button>
-      <p>Use headphones for the horror atmosphere.</p>
-    </div>
-  </div>
-</div>
-
-<!-- একটাই Three.js (r128) দুই গেমের জন্য -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script src="sprect.js"></script>
 <script src="script.js"></script>
-
-<!-- ================= Ghost Kingdom সুইচ লজিক ================= -->
-<script>
-(function(){
-  var KEY='neonRacerGhostKingdom';
-  var tg=document.getElementById('ghostToggle');          // Settings এর টগল
-  var tgMenu=document.getElementById('ghostToggleMenu');  // ভূতের মেনুর টগল
-  var gk=document.getElementById('ghostKingdom');
-  var home=document.getElementById('home');
-
-  function load(){try{return localStorage.getItem(KEY)==='1'}catch(e){return false}}
-  function save(v){try{localStorage.setItem(KEY,v?'1':'0')}catch(e){}}
-
-  tg.checked=load();
-  tgMenu.checked=tg.checked;
-
-  tg.addEventListener('change',function(){tgMenu.checked=tg.checked;save(tg.checked)});
-  tgMenu.addEventListener('change',function(){tg.checked=tgMenu.checked;save(tg.checked)});
-
-  function openGhost(){
-    gk.classList.remove('hidden');
-    document.getElementById('overlay').classList.remove('hidden');
-    home.classList.remove('active');
-  }
-  function closeGhost(){
-    gk.classList.add('hidden');
-    home.classList.add('active');
-  }
-
-  // Ghost Kingdom চালু থাকলে PLAY চাপলে ভূতের রাজ্য খুলবে (মেইন গেমের হ্যান্ডলারের আগে ধরা হয়)
-  document.addEventListener('click',function(e){
-    var b=e.target.closest&&e.target.closest('#play');
-    if(b&&tg.checked){
-      e.stopPropagation();
-      e.preventDefault();
-      openGhost();
-    }
-  },true);
-
-  document.getElementById('gkHome').addEventListener('click',closeGhost);
-
-  window.openGhostKingdom=openGhost;
-  window.closeGhostKingdom=closeGhost;
-})();
-</script>
 </body>
-  </html>
+</html>

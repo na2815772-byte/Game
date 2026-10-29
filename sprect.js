@@ -1,4 +1,4 @@
-Const $=id=>document.getElementById(id),clamp=THREE.MathUtils.clamp,lerp=THREE.MathUtils.lerp;
+const $=id=>document.getElementById(id),clamp=THREE.MathUtils.clamp,lerp=THREE.MathUtils.lerp;
 const scene=new THREE.Scene();scene.background=new THREE.Color(0x7fb8e0);scene.fog=new THREE.Fog(0x7fb8e0,50,190);
 const camera=new THREE.PerspectiveCamera(64,innerWidth/innerHeight,.1,900);
 const renderer=new THREE.WebGLRenderer({canvas:$('game'),antialias:true});renderer.setPixelRatio(Math.min(devicePixelRatio,1.5));renderer.setSize(innerWidth,innerHeight);
@@ -325,6 +325,7 @@ const stopLine=box(12,.03,.3,bm(0xfff1d2),0,.03,-78);stopLine.rotation.order='YX
 let sigState='GREEN',sigT=0,passed=false;
 function setSig(s){sigState=s;const k=s==='RED'?0:s==='YELLOW'?1:2;lamps.forEach((l,i)=>l.material.color.set(i===k?[0xff2525,0xffc52e,0x20ff7a][i]:0x242a30));$('sigT').textContent=s}
 
+/* ট্রাফিক মাঝারি রাখার জন্য কাউন্ট ও স্পাওনিং লজিক */
 function spawnTraffic(cr,zz){if(traffic.length>=10)return;const z0=zz!==undefined?zz:-120-Math.random()*50-clamp(cur,0,94)*.6;const lanes=[-4,0,4].filter(l=>!traffic.some(o=>Math.abs(o.userData.lx-l)<1.5&&Math.abs(o.position.z-z0)<22));if(!lanes.length)return;const r=Math.random(),ne=!traffic.some(q=>q.userData.em),c=ne&&r<.07?makePolice():ne&&r<.14?makeAmb():tvh();c.rotation.order='YXZ';const lx=lanes[Math.floor(Math.random()*lanes.length)];c.userData.lx=lx;c.position.set(lx,0,z0);c.userData.v=(.3+Math.random()*.3)*cr;c.userData.cv=c.userData.v;c.userData.tlx=lx;scene.add(c);traffic.push(c)}
 
 const dGeo=new THREE.LatheGeometry([[0,-1],[.78,.1],[.86,.22],[.5,.62],[0,.62]].map(p=>new THREE.Vector2(p[0],p[1])),8),
@@ -773,7 +774,7 @@ player.userData.tm.color.set(brake&&cur>1?0xff1020:0x7a0f18);
 
 const kmh=cur*3.2,lim=Math.round(cruise*3.2*zones[Math.floor(runT/20)%4]/10)*10;
 $('spd').textContent=$('big').textContent=Math.round(kmh);$('lim').textContent=$('law').checked?lim:'∞';$('arc').style.strokeDashoffset=264*(1-clamp(kmh/(cur>100?1000:300),0,1));
-if($('law').checked&&kmh>lim*1.04&&supT<=0&&boostT<=0&&cur<=100){over+=dt;if(over>2.5){over=0;fines++;score=Math.max(0,score-100);sfx('fine');if(fines>=3)end('৩ বার গতিসীমা অমান্য করেছ! 🚓');else toast('⚠ গতিসীমা অমান্য! জরিমানা −১০০ ('+fines+'/৩)')}}else over=Math.max(0,over-dt);
+if($('law').checked&&kmh>lim*1.04&&supT<=0&&boostT<=0&&cur<=100){over+=dt;if(over>2.5){over=0;fines++;score=Math.max(0,score-100);sfx('fine');if(fines>=3)end('৩ বার গতিসীমা অমান্য করেছ! 🚓');else toast('⚠ গতিসীমা অমান্য! জরিমানা −১ ১০০ ('+fines+'/৩)')}}else over=Math.max(0,over-dt);
 
 score+=dt*cur*.65*(pw.x2>0?2:1)*(1+.05*ml('paint'));dist+=cur*3.2/3600*dt;
 

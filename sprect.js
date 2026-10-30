@@ -882,3 +882,8 @@ camera.lookAt(player.position.x*.5+rel(-25)*.5,1.1+ey(-12)*.6,camV===2?-14:-10);
 $('village').checked=rd('nr_village',false);
 camera.position.set(0,4.4,11.5);setSig('GREEN');applyRoad();place();garage();sync();requestAnimationFrame(animate);
 addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)});
+document.getElementById("ghostKingdom").addEventListener("change", function () {
+  if (this.checked) {
+    window.location.href = "Ghost-Kingdom.html";
+  }
+});

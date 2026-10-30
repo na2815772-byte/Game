@@ -882,12 +882,3 @@ camera.lookAt(player.position.x*.5+rel(-25)*.5,1.1+ey(-12)*.6,camV===2?-14:-10);
 $('village').checked=rd('nr_village',false);
 camera.position.set(0,4.4,11.5);setSig('GREEN');applyRoad();place();garage();sync();requestAnimationFrame(animate);
 addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)});
-// সেটিংস মেনুর নতুন প্রদেশ বাটনের জন্য ইভেন্ট লিসেনার ও রিডাইরেক্ট লজিক
-const newProvinceBtn = document.getElementById('newProvinceBtn');
-
-if (newProvinceBtn) {
-    newProvinceBtn.addEventListener('click', function() {
-        // নতুন প্রাদেশের এইচটিএমএল ফাইলে রিডাইরেক্ট বা লিংক করা
-        window.location.href = 'new-province.html';
-    });
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              }

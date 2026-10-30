@@ -94,6 +94,7 @@ button{cursor:pointer;touch-action:manipulation}
 <div id="badge">🚦 <span id="sigT">GREEN</span> · <span id="spd">0</span>/<span id="lim">80</span> km/h</div>
 <div id="mission"><span id="mtxt"></span><i id="mbar"></i></div>
 <div id="lvlBanner"></div>
+<div id="lootBar"></div>
 <div id="controls">
   <div class="pad">
     <button class="ctrl" data-c="horn" style="font-size:22px">📯</button>
@@ -172,7 +173,7 @@ button{cursor:pointer;touch-action:manipulation}
   <div class="panel">
     <button class="topHome" data-home aria-label="Home">⌂</button>
     <h2>🎨 মডিফাই গ্যারেজ</h2>
-    <p style="margin:0 0 8px">খেলায় পাওয়া ২৩ ধরনের পুরস্কার দিয়ে কেনো। প্রতিটা জিনিস একটা নির্দিষ্ট পুরস্কার দিয়ে কেনা যায় — বডি, চাকা, কাচ, লাইট, কিট, হর্ন সব বদলাو।</p>
+    <p style="margin:0 0 8px">খেলায় পাওয়া ২৩ ধরনের পুরস্কার দিয়ে কেনো। প্রতিটা জিনিস একটা নির্দিষ্ট পুরস্কার দিয়ে কেনা যায় — বডি, চাকা, কাচ, লাইট, কিট, হর্ন সব বদলাও।</p>
     <div class="car-card" style="margin-bottom:12px"><div class="car-art" id="msArt"></div><h3 id="msName"></h3></div>
     <div id="msBal" style="font-size:13px;color:#c0d2e1;line-height:1.8;margin-bottom:10px"></div>
     <div class="grid2" id="msTabs" style="margin-bottom:12px"></div>
@@ -196,8 +197,6 @@ button{cursor:pointer;touch-action:manipulation}
     <div class="row"><label for="law">🚦 ট্রাফিক আইন (চালু/বন্ধ)</label><input id="law" type="checkbox" checked></div>
     <div class="row"><label for="ppl">🚶 যাত্রী ওঠানামা (Passengers)</label><input id="ppl" type="checkbox" checked></div>
     <div class="row"><label for="difficulty">🚗 ট্রাফিক কঠিনতা</label><select id="difficulty"><option value="easy">সহজ</option><option value="normal" selected>মাঝারি</option><option value="hard">কঠিন</option></select></div>
-    <!-- নতুন প্রাদেশের বাটন যোগ করা হয়েছে -->
-    <div class="row"><label>🗺️ নতুন প্রদেশ (New Province)</label><button id="newProvinceBtn" class="primary" style="padding:8px 14px;">Open Province</button></div>
     <br><button id="calibrate">ক্যালিব্রেট</button> <button data-home>⌂ HOME</button>
   </div>
 </section>
@@ -233,6 +232,6 @@ button{cursor:pointer;touch-action:manipulation}
 </section>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script src="screct.js"></script>
+<script src="sprect.js"></script>
 </body>
 </html>
